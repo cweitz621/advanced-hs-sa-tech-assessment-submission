@@ -196,14 +196,17 @@ tbody tr:hover {
 
 .deal-item {
     background: #f8f9fa;
-    padding: 12px;
+    padding: 10px;
     border-radius: 6px;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
     border-left: 4px solid #667eea;
+    font-size: 0.85em;
+    line-height: 1.4;
 }
 
 .deal-item strong {
     color: #667eea;
+    font-size: 0.95em;
 }
 
 .deal-item .amount {

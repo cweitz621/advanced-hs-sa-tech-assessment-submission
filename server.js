@@ -862,7 +862,7 @@ Based on this customer data, provide a concise AI Customer Health Insight analys
 {
   "likelihoodToUpgrade": "Low/Medium/High with percentage (e.g., 'High (85%)')",
   "riskOfChurn": "Low/Medium/High with percentage (e.g., 'Medium (45%)')",
-  "suggestedAction": "A specific, actionable marketing or sales recommendation",
+  "suggestedAction": "A specific, actionable marketing or sales recommendation that includes which HubSpot AI tools to use for execution (e.g., 'Use HubSpot AI Content Writer to create personalized email campaign', 'Leverage ChatSpot AI to analyze customer engagement patterns', 'Use HubSpot AI Email Assistant to draft follow-up sequences', 'Utilize HubSpot AI-powered workflows to automate re-engagement')",
   "justification": "A brief 2-3 sentence explanation of the insights"
 }
 
@@ -873,7 +873,16 @@ Focus on:
 - Risk factors (unconverted trials, no recent activity)
 - Opportunities (upsell potential, re-engagement needs)
 
-Be specific and actionable in your recommendations.`;
+IMPORTANT: In your suggestedAction field, you MUST recommend specific HubSpot AI tools that sales and marketing teams can use to tactically execute on the suggestion. Examples include:
+- HubSpot AI Content Writer (for creating personalized content)
+- ChatSpot AI (for data analysis and insights)
+- HubSpot AI Email Assistant (for drafting emails)
+- HubSpot AI-powered Workflows (for automation)
+- HubSpot AI Chatbot (for customer engagement)
+- HubSpot AI Sales Assistant (for sales recommendations)
+- HubSpot AI Marketing Hub features (for campaign optimization)
+
+Be specific and actionable in your recommendations, always tying them to HubSpot AI tool capabilities.`;
 
     // Call Gemini 2.0 Flash API (experimental)
     const geminiResponse = await axios.post(

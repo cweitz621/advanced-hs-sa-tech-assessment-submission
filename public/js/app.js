@@ -153,8 +153,8 @@ async function loadContacts() {
                             <th>Email</th>
                             <th>Job Title</th>
                             <th>Company</th>
-                            <th>Thermostat Purchase</th>
-                            <th>Trial</th>
+                            <th>Thermostat Purchases</th>
+                            <th>Trials</th>
                             <th>Breezy Subscriptions</th>
                             <th>AI Customer Health</th>
                         </tr>
@@ -252,11 +252,23 @@ function renderDeals(deals) {
         const stageLabel = pipelineStagesMap[stageId] || stageId;
         const recordId = deal.id || 'N/A';
         
+        // Determine stage color based on stage label
+        const stageLabelLower = stageLabel.toLowerCase();
+        let stageColor = '#667eea'; // Default purple
+        if (stageLabelLower.includes('converted')) {
+            stageColor = '#28a745'; // Green
+        } else if (stageLabelLower.includes('lost')) {
+            stageColor = '#dc3545'; // Red
+        } else if (stageLabelLower.includes('active')) {
+            stageColor = '#ff9800'; // Orange
+        }
+        
         return `
             <div class="deal-item">
                 <strong>${deal.properties.dealname || 'Unnamed Deal'}</strong><br>
-                <span class="amount">${amount}</span> • Stage: ${stageLabel}<br>
-                Record ID: ${recordId}
+                <span class="amount">${amount}</span><br>
+                <span style="color: ${stageColor}; font-weight: 600;">${stageLabel}</span><br>
+                <span style="font-size: 0.75em; color: #888;">ID: ${recordId}</span>
             </div>
         `;
     }).join('');
@@ -329,8 +341,8 @@ function renderSubscriptions(subscriptions) {
         return `
             <div class="deal-item">
                 <strong>Subscription: ${subscriptionId}</strong><br>
-                Trial ID: ${trialId}<br>
-                Status: <span style="color: #667eea; font-weight: 600;">${status}</span>${dateDisplay}
+                Status: <span style="color: #667eea; font-weight: 600;">${status}</span>${dateDisplay}<br>
+                <span style="font-size: 0.75em; color: #888;">Trial ID: ${trialId}</span>
             </div>
         `;
     }).join('');
