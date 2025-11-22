@@ -1,6 +1,5 @@
-# HubSpot Integration - Breezy Technical Assessment
+# HubSpot Integration - Solutions Architect Technical Assessment
 
-**⚠️ Work in Progress**
 
 This is a proof-of-concept application for the HubSpot Solutions Architect Technical Assessment. It demonstrates how Breezy (a smart home technology company) would integrate their platform with HubSpot to sync customer data, track trials, and manage subscriptions.
 
