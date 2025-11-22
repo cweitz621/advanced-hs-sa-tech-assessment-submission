@@ -682,6 +682,44 @@ app.get('/api/contacts/:contactId/subscriptions', async (req, res) => {
   }
 });
 
+// PATCH endpoint - Update Breezy Subscription status
+app.patch('/api/subscriptions/:subscriptionId', async (req, res) => {
+  try {
+    const { subscriptionId } = req.params;
+    const { status } = req.body;
+    
+    if (!status) {
+      return res.status(400).json({ error: 'Status is required' });
+    }
+    
+    const objectType = '2-53381506';
+    
+    // Update the subscription status
+    const updateResponse = await axios.patch(
+      `${HUBSPOT_API_BASE}/crm/v3/objects/${objectType}/${subscriptionId}`,
+      {
+        properties: {
+          status: status
+        }
+      },
+      {
+        headers: {
+          'Authorization': `Bearer ${HUBSPOT_TOKEN}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+    
+    res.json(updateResponse.data);
+  } catch (error) {
+    console.error('Error updating subscription status:', error.response?.data || error.message);
+    res.status(error.response?.status || 500).json({
+      error: 'Failed to update subscription status',
+      details: error.response?.data || error.message
+    });
+  }
+});
+
 // POST endpoint - Get AI Customer Health Insight for a contact
 app.post('/api/contacts/:contactId/ai-insight', async (req, res) => {
   try {

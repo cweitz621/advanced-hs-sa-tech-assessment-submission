@@ -132,6 +132,30 @@ You should see:
 
 The subscription will then appear in the admin panel table for the associated contact.
 
+#### 7. Set Up Subscription Status Update Workflow (Optional)
+
+**Optional Enhancement**: To automatically set the `cancellation_date` when a subscription status is changed to "Cancelled":
+
+1. **Navigate to Workflows**:
+   - Go to **Automation** → **Workflows** in your HubSpot account
+   - Click **Create workflow**
+
+2. **Set Workflow Trigger**:
+   - Choose **Custom object-based workflow**
+   - Select object: **Breezy Subscription**
+   - Set trigger: When `status` property changes to "Cancelled"
+
+3. **Add Action: Set Property Value**:
+   - Add action: **Set property value**
+   - Property: `cancellation_date`
+   - Value: Current date/time
+
+4. **Activate the Workflow**:
+   - Review and activate the workflow
+   - When a subscription status is updated to "Cancelled" from the admin panel, the workflow will automatically set the cancellation date
+
+**This demonstrates bidirectional integration**: The admin panel can update HubSpot data, and HubSpot workflows can respond to those updates, creating a seamless integration between systems.
+
 #### 7. Access the Application
 
 Open your browser and navigate to:
@@ -163,12 +187,19 @@ http://localhost:3001
      - **Breezy Subscriptions** (status, dates, trial ID) - *These are created by HubSpot workflows when trials convert*
      - AI Customer Health insights (optional)
 
-4. **Test AI Insights:**
+4. **Update Subscription Status:**
+   - In the "Breezy Subscriptions" column, click the status dropdown on any subscription card
+   - Change the status from "Active" to "Cancelled" (or vice versa)
+   - The status updates immediately in HubSpot via API
+   - If changing to "Cancelled", the cancellation date will be set by a HubSpot workflow (if configured) and will appear after a brief delay
+   - This demonstrates that Breezy Subscriptions can be edited in HubSpot from an external system (the admin panel)
+
+5. **Test AI Insights:**
    - Click "Get AI Insight" button for any contact
    - Modal will display AI-generated customer health analysis
    - Includes likelihood to upgrade, churn risk, and HubSpot AI tool recommendations
 
-5. **Test Error Handling:**
+6. **Test Error Handling:**
    - Try creating a contact with an existing email address
    - Verify you receive a clear error message about duplicate contacts
 
@@ -184,7 +215,8 @@ This proof-of-concept demonstrates an integration between Breezy's smart home pl
 2. **Track Hardware Purchases**: Create deals in HubSpot's "Hardware Pipeline" with associated line items for thermostat purchases
 3. **Manage Trial Signups**: Create trial deals with line items that include billing frequency and pricing information
 4. **Monitor Subscriptions**: Display subscription status from HubSpot's custom "Breezy Subscriptions" object
-5. **AI-Powered Insights**: Generate customer health insights using Google Gemini AI, with recommendations for HubSpot AI tools
+5. **Manage Subscription Status**: Update subscription status (Active/Cancelled) directly from the admin panel, demonstrating that Breezy Subscriptions can be edited in HubSpot via another system
+6. **AI-Powered Insights**: Generate customer health insights using Google Gemini AI, with recommendations for HubSpot AI tools
 
 
 
@@ -194,6 +226,7 @@ This proof-of-concept demonstrates an integration between Breezy's smart home pl
 - **Deal Tracking**: Separate pipelines for hardware purchases (Hardware Pipeline) and trials (Default Pipeline)
 - **Line Item Integration**: Automatic creation of line items for thermostats and premium subscriptions
 - **Custom Object Integration**: Read subscription data from HubSpot custom objects
+- **Subscription Status Management**: Update subscription status (Active/Cancelled) directly from the admin panel via inline dropdown, demonstrating bidirectional integration where external systems can edit HubSpot data
 - **AI Customer Health**: Generate insights with specific HubSpot AI tool recommendations
 - **Error Handling**: User-friendly error messages for common issues (e.g., duplicate emails)
 
@@ -386,6 +419,8 @@ This data model architecture provides several key benefits for Breezy's business
    - Linked to trials via `trial_id`
    - Status tracked (Active/Cancelled)
    - Dates tracked (active_date, cancellation_date)
+   - **Status can be updated from the admin panel**: Demonstrates bidirectional integration where external systems can edit HubSpot subscription data via API (`PATCH /api/subscriptions/:subscriptionId`)
+   - When status is changed to "Cancelled", HubSpot workflows can automatically set the `cancellation_date` property
 
 ---
 

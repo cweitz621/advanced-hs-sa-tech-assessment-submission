@@ -220,6 +220,37 @@ tbody tr:hover {
     font-weight: 600;
 }
 
+/* Subscription Status Dropdown - Minimal inline styling */
+.subscription-status-select {
+    display: inline-block;
+    padding: 4px 8px;
+    margin-left: 5px;
+    border: 1px solid #667eea;
+    border-radius: 4px;
+    background: white;
+    color: #667eea;
+    font-size: 0.85em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.subscription-status-select:hover {
+    background: #f0f0ff;
+    border-color: #764ba2;
+}
+
+.subscription-status-select:focus {
+    outline: none;
+    border-color: #764ba2;
+    box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+}
+
+.subscription-status-select:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
 .no-deals {
     color: #888;
     font-style: italic;

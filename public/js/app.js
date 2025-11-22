@@ -320,6 +320,9 @@ async function loadContacts() {
         `;
         
         container.innerHTML = tableHTML;
+        
+        // Setup subscription status handlers after rendering
+        setupSubscriptionStatusHandlers();
     } catch (error) {
         console.error('Error loading contacts:', error);
         container.innerHTML = `<div class="error">Error loading contacts: ${error.message}</div>`;
@@ -468,14 +471,94 @@ function renderSubscriptions(subscriptions) {
             }
         }
         
+        // Create unique ID for the select dropdown
+        const selectId = `subscription-status-${subscription.id || subscriptionId}`;
+        
         return `
             <div class="deal-item">
                 <strong>Subscription: ${subscriptionId}</strong><br>
-                Status: <span style="color: #667eea; font-weight: 600;">${status}</span>${dateDisplay}<br>
+                Status: <select id="${selectId}" class="subscription-status-select" data-subscription-id="${subscription.id}">
+                    <option value="Active" ${status.toLowerCase() === 'active' ? 'selected' : ''}>Active</option>
+                    <option value="Cancelled" ${status.toLowerCase() === 'cancelled' ? 'selected' : ''}>Cancelled</option>
+                </select>${dateDisplay}<br>
                 <span style="font-size: 0.75em; color: #888;">Trial ID: ${trialId}</span>
             </div>
         `;
     }).join('');
+}
+
+// Setup subscription status change handlers (using event delegation - only set up once)
+let subscriptionHandlersSetup = false;
+
+function setupSubscriptionStatusHandlers() {
+    // Only set up the event listener once using event delegation
+    if (!subscriptionHandlersSetup) {
+        document.addEventListener('change', async (e) => {
+            if (e.target.classList.contains('subscription-status-select')) {
+                const subscriptionId = e.target.getAttribute('data-subscription-id');
+                const newStatus = e.target.value;
+                const originalValue = e.target.getAttribute('data-original-value');
+                
+                if (!subscriptionId) {
+                    console.error('No subscription ID found');
+                    return;
+                }
+                
+                // Prevent duplicate updates
+                if (newStatus === originalValue) {
+                    return;
+                }
+                
+                // Disable dropdown during update
+                e.target.disabled = true;
+                const originalText = e.target.value;
+                
+                try {
+                    const response = await fetch(`${API_BASE}/subscriptions/${subscriptionId}`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ status: newStatus })
+                    });
+                    
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.error || 'Failed to update subscription status');
+                    }
+                    
+                    // Update the original value attribute
+                    e.target.setAttribute('data-original-value', newStatus);
+                    
+                    // If status was changed to Cancelled, wait a moment for HubSpot workflow to set cancellation_date
+                    if (newStatus.toLowerCase() === 'cancelled') {
+                        // Wait 2 seconds for workflow to process, then reload
+                        setTimeout(async () => {
+                            await loadContacts();
+                        }, 2000);
+                    } else {
+                        // Reload immediately for other status changes
+                        await loadContacts();
+                    }
+                } catch (error) {
+                    console.error('Error updating subscription status:', error);
+                    alert(`Failed to update subscription status: ${error.message}`);
+                    // Revert dropdown to original value
+                    e.target.value = originalText;
+                } finally {
+                    e.target.disabled = false;
+                }
+            }
+        });
+        subscriptionHandlersSetup = true;
+    }
+    
+    // Set original values on existing dropdowns
+    document.querySelectorAll('.subscription-status-select').forEach(select => {
+        if (!select.getAttribute('data-original-value')) {
+            select.setAttribute('data-original-value', select.value);
+        }
+    });
 }
 
 // Render AI Insight button for a contact
@@ -727,6 +810,7 @@ document.getElementById('refresh-contacts-btn').addEventListener('click', async 
 document.addEventListener('DOMContentLoaded', async () => {
     // Load pipeline stages first, then contacts
     await loadPipelineStages();
-    await Promise.all([loadContacts(), loadContactsForSelect()]);
-});
+        await Promise.all([loadContacts(), loadContactsForSelect()]);
+        setupSubscriptionStatusHandlers();
+    });
 
