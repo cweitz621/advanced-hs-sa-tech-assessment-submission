@@ -1,10 +1,19 @@
-# HubSpot Integration Backend - Breezy Technical Assessment
+# HubSpot Integration - Breezy Technical Assessment
 
-This is a backend server for the HubSpot Solutions Architect Technical Assessment. It provides a proxy layer between your frontend application and the HubSpot CRM API.
+**⚠️ Work in Progress**
+
+This is a proof-of-concept application for the HubSpot Solutions Architect Technical Assessment. It demonstrates how Breezy (a smart home technology company) would integrate their platform with HubSpot to sync customer data, track trials, and manage subscriptions.
+
+The project includes both a backend server (Express.js) that provides a proxy layer between the frontend and HubSpot CRM API, and a frontend admin panel for managing customer data.
 
 ## Overview
 
-This Express.js server handles authentication and proxies requests to the HubSpot API. You'll build a frontend application that calls these endpoints to demonstrate how Breezy (a smart home technology company) would integrate their platform with HubSpot.
+This Express.js server handles authentication and proxies requests to the HubSpot API. The frontend admin panel demonstrates how Breezy (a smart home technology company) would integrate their platform with HubSpot to:
+
+- Sync customer data from e-commerce platform to HubSpot
+- Track thermostat purchases with line items
+- Manage trial signups and conversions
+- Monitor subscription status and conversions
 
 ## Prerequisites
 
@@ -327,25 +336,42 @@ Common errors:
 ## Project Structure
 
 ```
-2026-SA-Tech-Assessment/
-├── server.js           # Main Express server
-├── package.json        # Dependencies and scripts
-├── .env.example        # Example environment variables
-├── .gitignore         # Git ignore rules
-└── README.md          # This file
+hs-solution-architect-tech-assignment/
+├── server.js              # Main Express server
+├── package.json           # Dependencies and scripts
+├── .env                   # Environment variables (not in git)
+├── .gitignore            # Git ignore rules
+├── README.md             # This file
+└── public/               # Frontend application
+    ├── index.html        # Main HTML file
+    ├── css/
+    │   └── styles.css    # Application styles
+    └── js/
+        └── app.js        # Application logic
 ```
 
-## Your Task
+## Current Features (Work in Progress)
 
-Build a frontend application that:
+✅ **Completed:**
+- Contact sync to HubSpot
+- Trial creation and tracking
+- Thermostat purchase tracking with line items
+- Subscription display (from custom object)
+- Dynamic pipeline stage loading
+- Responsive admin panel UI
 
-1. Displays contacts from `GET /api/contacts`
-2. Creates contacts via `POST /api/contacts`
-3. Creates deals via `POST /api/deals`
-4. Shows deals for each contact via `GET /api/contacts/:contactId/deals`
-5. Incorporates an AI feature using OpenAI or Anthropic API
+🚧 **In Progress:**
+- Additional features and refinements
+- AI-powered intelligence features (optional)
 
-You can build your frontend in the `/public` folder or in a separate directory.
+## Frontend Application
+
+The frontend admin panel (`/public/index.html`) provides:
+
+1. **Contact Management**: Sync customers to HubSpot with optional thermostat purchase tracking
+2. **Trial Management**: Create and track trial signups
+3. **Data Visualization**: View contacts, trials, thermostat purchases, and subscriptions in a unified table
+4. **Real-time Updates**: Refresh data and see changes immediately
 
 ## Troubleshooting
 
