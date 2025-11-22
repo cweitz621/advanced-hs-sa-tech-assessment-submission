@@ -243,7 +243,7 @@ This proof-of-concept demonstrates an integration between Breezy's smart home pl
 **What I Learned:**
 - Prompt engineering is crucial for getting structured, actionable responses from AI
 - AI models need clear instructions about output format (JSON structure)
-- Context matters: providing comprehensive information about the business and its goals and priorities leads to better outcomes
+- Context matters: providing comprehensive information about the business and its goals/priorities leads to better outcomes
 - **AI for Documentation**: Using Gemini to generate Mermaid diagram code demonstrated how AI can accelerate documentation tasks, helping structure complex relationships and generate visual representations of system architecture
 
 ### How Did AI Help (or Not Help)?
@@ -313,8 +313,7 @@ This proof-of-concept demonstrates an integration between Breezy's smart home pl
 **Stages:**
 - **Active** - Trial is currently active
 - **Converted** - Trial converted to paid subscription
-- **Lost** - Trial ended without conversion
-- **Ended** - Trial has ended (treated same as Lost)
+- **Ended** - Trial has ended
 
 **Deal Properties:**
 - `dealname`: "Breezy Premium - 30 Day Trial" (default)
@@ -397,30 +396,21 @@ AI provides: "High likelihood to upgrade (85%) - Customer purchased 2 thermostat
 ### Technical Choices and Why
 
 1. **Express.js Backend**
-   - **Why**: Simple, well-documented, easy to extend
-   - **Alternative Considered**: Next.js API routes (but wanted separation of concerns)
+   - **Why**: Simple, well-documented, easy to extend. Also was the provided boilerplate for this Assessment
 
 2. **Vanilla JavaScript Frontend**
    - **Why**: No build step required, fast iteration, demonstrates core skills
    - **Alternative Considered**: React/Vue (would add complexity for POC)
 
-3. **HubSpot API v3**
-   - **Why**: Most current, supports custom objects, better error handling
-   - **Alternative Considered**: v1 (deprecated), v2 (limited features)
-
-4. **Separate CSS/JS Files**
-   - **Why**: Better organization, maintainability, follows best practices
-   - **Alternative Considered**: Inline styles/scripts (initially, but refactored for clarity)
-
-5. **Modal for AI Insights**
+3. **Modal for AI Insights**
    - **Why**: Keeps table compact, better UX for detailed information
    - **Alternative Considered**: Inline expansion (too much space)
 
-6. **Dynamic Pipeline Loading**
+4. **Dynamic Pipeline Loading**
    - **Why**: Adapts to HubSpot configuration changes without code updates
    - **Alternative Considered**: Hardcoded stages (less flexible)
 
-7. **Line Items for Both Purchases and Trials**
+5. **Line Items for Both Purchases and Trials**
    - **Why**: Proper revenue tracking, supports reporting, follows HubSpot best practices
    - **Alternative Considered**: Deals only (less accurate for accounting)
 
@@ -502,12 +492,6 @@ AI provides: "High likelihood to upgrade (85%) - Customer purchased 2 thermostat
    - What's the support model?
 
 ---
-
-## Additional Resources
-
-### API Endpoints
-
-See the original README sections for detailed API documentation, or check `server.js` for implementation details.
 
 ### Project Structure
 
