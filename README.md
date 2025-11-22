@@ -277,73 +277,7 @@ This POC demonstrates the workflow approach to show how you can reduce API call 
 
 ### Entity Relationship Diagram (ERD)
 
-```
-┌─────────────────┐
-│    CONTACTS     │
-│─────────────────│
-│ • id            │
-│ • firstname     │
-│ • lastname      │
-│ • email         │
-│ • phone         │
-│ • address       │
-│ • jobtitle      │
-│ • company       │
-└────────┬────────┘
-         │
-         │ (1:N)
-         │
-         ├──────────────────────────────┐
-         │                              │
-         │                              │
-    ┌────▼─────┐                  ┌─────▼─────┐
-    │  DEALS   │                  │  DEALS   │
-    │ (Trials) │                  │(Hardware)│
-    │──────────│                  │──────────│
-    │ • id     │                  │ • id     │
-    │ • name   │                  │ • name   │
-    │ • amount │                  │ • amount │
-    │ • stage  │                  │ • stage  │
-    │ • trial  │                  │ • pipeline│
-    │   value  │                  │   (Order)│
-    └────┬─────┘                  └────┬─────┘
-         │                              │
-         │ (1:N)                        │ (1:N)
-         │                              │
-    ┌────▼──────────┐            ┌──────▼──────────┐
-    │  LINE ITEMS   │            │   LINE ITEMS    │
-    │ (Premium)    │            │  (Thermostat)   │
-    │──────────────│            │─────────────────│
-    │ • id         │            │ • id            │
-    │ • name       │            │ • name          │
-    │ • price      │            │ • price         │
-    │ • quantity   │            │ • quantity      │
-    │ • billing    │            │ • amount        │
-    │   frequency  │            └─────────────────┘
-    └────┬─────────┘
-         │
-         │ (N:1)
-         │
-    ┌────▼──────────┐
-    │   PRODUCTS   │
-    │──────────────│
-    │ • id         │
-    │ • name       │
-    │ • price      │
-    └──────────────┘
-
-┌─────────────────────────────┐
-│  CUSTOM OBJECT              │
-│  Breezy Subscriptions       │
-│─────────────────────────────│
-│ • id                        │
-│ • subscription_id           │
-│ • status (Active/Cancelled) │
-│ • active_date               │
-│ • cancellation_date         │
-│ • trial_id                  │
-└─────────────────────────────┘
-```
+![HubSpot Data Architecture ERD](assets/images/SA_assessment_ADVANCED_ERD.png)
 
 ### Deal Pipeline Architecture
 
@@ -641,6 +575,8 @@ hs-solution-architect-tech-assignment/
 ├── .env.example          # Example environment variables
 ├── .gitignore            # Git ignore rules
 ├── README.md             # This file
+├── assets/              # Documentation assets
+│   └── images/          # Images for README documentation
 └── public/               # Frontend application
     ├── index.html        # Main HTML file
     ├── css/
@@ -648,6 +584,32 @@ hs-solution-architect-tech-assignment/
     └── js/
         └── app.js        # Application logic
 ```
+
+### Adding Images to README
+
+To include images in this README, place them in the `assets/images/` directory and reference them using markdown syntax:
+
+**Example:**
+```markdown
+![Alt text](assets/images/screenshot.png)
+![Admin Panel Overview](assets/images/admin-panel.png)
+```
+
+**For images with captions or links:**
+```markdown
+[![Click to view larger](assets/images/diagram.png)](assets/images/diagram.png)
+```
+
+**Supported image formats:**
+- PNG (recommended for screenshots)
+- JPG/JPEG (for photos)
+- GIF (for animated images)
+- SVG (for diagrams)
+
+**Best practices:**
+- Use descriptive filenames (e.g., `admin-panel-overview.png` instead of `image1.png`)
+- Keep file sizes reasonable for GitHub viewing
+- Use alt text that describes the image content
 
 ### Troubleshooting
 
