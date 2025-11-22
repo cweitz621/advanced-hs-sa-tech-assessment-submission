@@ -257,7 +257,7 @@ function renderDeals(deals) {
         let stageColor = '#667eea'; // Default purple
         if (stageLabelLower.includes('converted')) {
             stageColor = '#28a745'; // Green
-        } else if (stageLabelLower.includes('lost')) {
+        } else if (stageLabelLower.includes('lost') || stageLabelLower.includes('ended')) {
             stageColor = '#dc3545'; // Red
         } else if (stageLabelLower.includes('active')) {
             stageColor = '#ff9800'; // Orange
@@ -497,7 +497,9 @@ document.getElementById('contact-form').addEventListener('submit', async (e) => 
         
         if (!response.ok) {
             const errorData = await response.json();
-            throw new Error(errorData.error || 'Failed to create contact');
+            // Use the detailed message if available, otherwise use the error field
+            const errorMessage = errorData.message || errorData.error || 'Failed to create contact';
+            throw new Error(errorMessage);
         }
         
         const data = await response.json();

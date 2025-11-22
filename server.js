@@ -245,6 +245,34 @@ app.post('/api/contacts', async (req, res) => {
     res.json(contactData);
   } catch (error) {
     console.error('Error creating contact:', error.response?.data || error.message);
+    
+    // Check if this is a duplicate email error
+    const errorData = error.response?.data;
+    const errorMessage = errorData?.message || '';
+    const errorStatus = error.response?.status;
+    
+    // HubSpot typically returns 409 Conflict or 400 Bad Request for duplicate emails
+    // Check for common duplicate email indicators
+    const isDuplicateEmail = 
+      errorStatus === 409 || 
+      errorStatus === 400 ||
+      errorMessage.toLowerCase().includes('already exists') ||
+      errorMessage.toLowerCase().includes('duplicate') ||
+      errorMessage.toLowerCase().includes('unique constraint') ||
+      (errorData?.errors && errorData.errors.some(err => 
+        err.message?.toLowerCase().includes('already exists') ||
+        err.message?.toLowerCase().includes('duplicate') ||
+        err.message?.toLowerCase().includes('unique constraint')
+      ));
+    
+    if (isDuplicateEmail) {
+      return res.status(409).json({
+        error: 'Contact already exists',
+        message: 'A contact with this email address already exists in HubSpot. This form is only for creating new contacts. Please use the existing contact in HubSpot to update information or create deals.',
+        details: errorData
+      });
+    }
+    
     res.status(error.response?.status || 500).json({
       error: 'Failed to create contact',
       details: error.response?.data || error.message
