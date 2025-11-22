@@ -1,5 +1,8 @@
 const API_BASE = 'http://localhost:3001/api';
 
+// Store contacts for searchable dropdown
+let allContacts = [];
+
 // Utility functions
 function showMessage(containerId, message, type = 'error') {
     const container = document.getElementById(containerId);
@@ -90,33 +93,162 @@ async function loadPipelineStages() {
 }
 
 // Load contacts into select dropdown
+// Load contacts for searchable dropdown
 async function loadContactsForSelect() {
     try {
         const response = await fetch(`${API_BASE}/contacts`);
         if (!response.ok) throw new Error('Failed to fetch contacts');
         
         const data = await response.json();
-        const select = document.getElementById('contact-select');
+        allContacts = data.results || [];
         
-        select.innerHTML = '<option value="">Select a contact...</option>';
+        const searchInput = document.getElementById('contact-search');
+        const hiddenInput = document.getElementById('contact-select');
         
-        if (data.results && data.results.length > 0) {
-            data.results.forEach(contact => {
-                const option = document.createElement('option');
-                option.value = contact.id;
-                const name = `${contact.properties.firstname || ''} ${contact.properties.lastname || ''}`.trim() || 
-                            contact.properties.email || 'Unknown';
-                option.textContent = `${name} (${contact.properties.email || 'No email'})`;
-                select.appendChild(option);
-            });
-        } else {
-            select.innerHTML = '<option value="">No contacts available</option>';
+        if (allContacts.length === 0) {
+            searchInput.placeholder = 'No contacts available';
+            searchInput.disabled = true;
+            return;
         }
+        
+        searchInput.placeholder = 'Search contacts by name or email...';
+        searchInput.disabled = false;
+        
+        // Set up search functionality
+        setupSearchableDropdown();
     } catch (error) {
         console.error('Error loading contacts for select:', error);
-        const select = document.getElementById('contact-select');
-        select.innerHTML = '<option value="">Error loading contacts</option>';
+        const searchInput = document.getElementById('contact-search');
+        searchInput.placeholder = 'Error loading contacts';
+        searchInput.disabled = true;
     }
+}
+
+// Set up searchable dropdown functionality
+function setupSearchableDropdown() {
+    const searchInput = document.getElementById('contact-search');
+    const hiddenInput = document.getElementById('contact-select');
+    const dropdown = document.getElementById('contact-dropdown');
+    let selectedIndex = -1;
+    
+    // Filter and display contacts
+    function filterContacts(searchTerm = '') {
+        const term = searchTerm.toLowerCase().trim();
+        const filtered = term === '' 
+            ? allContacts 
+            : allContacts.filter(contact => {
+                const name = `${contact.properties.firstname || ''} ${contact.properties.lastname || ''}`.trim().toLowerCase();
+                const email = (contact.properties.email || '').toLowerCase();
+                return name.includes(term) || email.includes(term);
+            });
+        
+        dropdown.innerHTML = '';
+        selectedIndex = -1;
+        
+        if (filtered.length === 0) {
+            dropdown.innerHTML = '<div class="dropdown-empty">No contacts found</div>';
+            dropdown.classList.add('show');
+            return;
+        }
+        
+        filtered.forEach((contact, index) => {
+            const item = document.createElement('div');
+            item.className = 'dropdown-item';
+            item.dataset.contactId = contact.id;
+            
+            const name = `${contact.properties.firstname || ''} ${contact.properties.lastname || ''}`.trim() || 
+                        contact.properties.email || 'Unknown';
+            const email = contact.properties.email || 'No email';
+            
+            item.innerHTML = `
+                <div class="contact-name">${name}</div>
+                <div class="contact-email">${email}</div>
+            `;
+            
+            item.addEventListener('click', () => {
+                selectContact(contact, name, email);
+            });
+            
+            item.addEventListener('mouseenter', () => {
+                // Remove previous selection
+                dropdown.querySelectorAll('.dropdown-item').forEach(el => el.classList.remove('selected'));
+                item.classList.add('selected');
+                selectedIndex = index;
+            });
+            
+            dropdown.appendChild(item);
+        });
+        
+        dropdown.classList.add('show');
+    }
+    
+    // Select a contact
+    function selectContact(contact, name, email) {
+        hiddenInput.value = contact.id;
+        searchInput.value = `${name} (${email})`;
+        dropdown.classList.remove('show');
+        selectedIndex = -1;
+    }
+    
+    // Search input event
+    searchInput.addEventListener('input', (e) => {
+        const term = e.target.value;
+        if (term === '') {
+            hiddenInput.value = '';
+        }
+        filterContacts(term);
+    });
+    
+    // Focus event
+    searchInput.addEventListener('focus', () => {
+        if (searchInput.value && !hiddenInput.value) {
+            filterContacts(searchInput.value);
+        } else if (!searchInput.value) {
+            filterContacts('');
+        }
+    });
+    
+    // Keyboard navigation
+    searchInput.addEventListener('keydown', (e) => {
+        const items = dropdown.querySelectorAll('.dropdown-item');
+        
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            selectedIndex = Math.min(selectedIndex + 1, items.length - 1);
+            items[selectedIndex]?.scrollIntoView({ block: 'nearest' });
+            items.forEach((el, idx) => {
+                el.classList.toggle('selected', idx === selectedIndex);
+            });
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            selectedIndex = Math.max(selectedIndex - 1, -1);
+            if (selectedIndex >= 0) {
+                items[selectedIndex]?.scrollIntoView({ block: 'nearest' });
+            }
+            items.forEach((el, idx) => {
+                el.classList.toggle('selected', idx === selectedIndex);
+            });
+        } else if (e.key === 'Enter' && selectedIndex >= 0 && items[selectedIndex]) {
+            e.preventDefault();
+            items[selectedIndex].click();
+        } else if (e.key === 'Escape') {
+            dropdown.classList.remove('show');
+        }
+    });
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
+            dropdown.classList.remove('show');
+        }
+    });
+    
+    // Clear selection when input is cleared
+    searchInput.addEventListener('input', (e) => {
+        if (e.target.value === '') {
+            hiddenInput.value = '';
+        }
+    });
 }
 
 // Load and display contacts
@@ -571,6 +703,10 @@ document.getElementById('deal-form').addEventListener('submit', async (e) => {
         
         // Reset form
         document.getElementById('deal-form').reset();
+        // Clear searchable dropdown
+        document.getElementById('contact-search').value = '';
+        document.getElementById('contact-select').value = '';
+        document.getElementById('contact-dropdown').classList.remove('show');
         
         // Refresh pipeline stages and contacts list to show new deal
         await Promise.all([loadPipelineStages(), loadContacts()]);

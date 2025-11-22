@@ -68,10 +68,12 @@
                 
                 <form id="deal-form">
                     <div class="form-group contact-select">
-                        <label for="contact-select">Select Contact *</label>
-                        <select id="contact-select" name="contactId" required>
-                            <option value="">Loading contacts...</option>
-                        </select>
+                        <label for="contact-search">Select Contact *</label>
+                        <div class="searchable-dropdown">
+                            <input type="text" id="contact-search" placeholder="Search contacts by name or email..." autocomplete="off">
+                            <input type="hidden" id="contact-select" name="contactId" required>
+                            <div id="contact-dropdown" class="dropdown-list"></div>
+                        </div>
                     </div>
                     
                     <div class="form-group">
