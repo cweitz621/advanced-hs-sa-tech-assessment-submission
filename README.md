@@ -87,6 +87,7 @@ This proof-of-concept demonstrates an integration between Breezy's smart home pl
 - **Cursor AI**: Used as the primary AI coding assistant throughout the development process
 - **Google Gemini 2.0 Flash (Experimental)**: Used for generating customer health insights
 - **Google Gemini**: Used in conjunction with Mermaid to generate the Entity Relationship Diagram (ERD) for the HubSpot data architecture
+- **Mermaid native AI helper**: Used to help correct Mermaid syntax errors
 
 
 ### What Tasks Did You Use AI For?
